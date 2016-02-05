@@ -35,33 +35,10 @@
 	  <property file="/build.properties"/>
 	  <property environment="env"/>
 	  
+	<target name="deploy">
+		<sf:deploy username="${sf.username}" password="${sf.password}" sessionId="${sf.sessionId}" serverurl="${sf.serverurl}" deployRoot="/src/classes"/>
 		
-	  	<property name="src.dir" value="/src" />
-	
-	    <target name="cleanAfter" depends="deploy">
-	        <echo level="info">Clean Down Workspace Ready for Next Build</echo>
-	        <delete dir="${basedir}" failonerror="false" />
-	        <delete includeEmptyDirs="true" failonerror="false">
-	          <fileset dir="${basedir}"/>
-	        </delete>
-	    </target>
-	    
-	<target name="deploy">   
-	      <echo level="info">Perform a Deploy transaction</echo>
-	      <zip destfile="${src.dir}/batch.zip"
-	           basedir="${src.dir}"
-	                 includes="classes/*.*"
-	      />
-
-	      <sf:deploy
-	          username="${sf.username}"
-	          password="${sf.password}"
-	          serverurl="${sf.serverurl}"
-	          maxPoll="${sf.maxPoll}" pollWaitMillis="${sf.maxWaitMillis}"
-	          zipFile="${src.dir}/batch.zip"
-	          runalltests="true" >
-	      </sf:deploy>
-	  </target>   
+		</target>
 
     
 </project>
