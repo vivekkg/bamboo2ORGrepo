@@ -1,6 +1,6 @@
-<project name="Sample usage of Salesforce Ant tasks" default="test" basedir="." xmlns:sf="antlib:com.salesforce">
+<project name="Sample usage of Salesforce Ant tasks" basedir="." xmlns:sf="antlib:com.salesforce">
 
-    <property file="build.properties"/>
+    <property file="/build.properties"/>
     <property environment="env"/>
 
     <!-- Setting default value for username, password and session id properties to empty string 
@@ -11,23 +11,54 @@
     <condition property="sf.password" value=""> <not> <isset property="sf.password"/> </not> </condition>
     <condition property="sf.sessionId" value=""> <not> <isset property="sf.sessionId"/> </not> </condition>
 
-    <taskdef resource="com/salesforce/antlib.xml" uri="antlib:com.salesforce">
+   <!-- <taskdef resource="com/salesforce/antlib.xml" uri="antlib:com.salesforce">
         <classpath>
             <pathelement location="/ant-salesforce.jar" />        	
         </classpath>
     </taskdef>
 	
-    <!-- Test out deploy and retrieve verbs for package 'mypkg' -->
+   
     <target name="test">
       <mkdir dir="retrieveOutput"/>
-      <!-- Retrieve the contents into another directory -->
+   
       <sf:retrieve username="${sf.username}" password="${sf.password}" sessionId="${sf.sessionId}" serverurl="${sf.serverurl}" retrieveTarget="retrieveOutput" unpackaged="reterievesource/package.xml"/>
     </target>
 	
 	<target name="deploy">
 	<sf:deploy username="${sf.username}" password="${sf.password}" sessionId="${sf.sessionId}" serverurl="${sf.serverurl}" deployRoot="retrieveOutput"/>
 	
-	</target>
+	</target> -->
+	<taskdef uri="antlib:com.salesforce"
+	            resource="com/salesforce/antlib.xml"
+	            classpath="/ant-salesforce.jar"/>
+	    
+	  <property file="/build.properties"/>
+	  <property environment="env"/>
+	  
+	    <target name="cleanAfter" depends="deployPackaged">
+	        <echo level="info">Clean Down Workspace Ready for Next Build</echo>
+	        <delete dir="${basedir}" failonerror="false" />
+	        <delete includeEmptyDirs="true" failonerror="false">
+	          <fileset dir="${basedir}"/>
+	        </delete>
+	    </target>
+	    
+	    <target name="deployPackaged">   
+	      <echo level="info">Perform a Deploy transaction</echo>
+	      <zip destfile="${src.dir}/batch.zip"
+	           basedir="/"
+	                 includes="applications/*.*, classes/*.*, staticresources/*.*,documents/**/*.*, email/**/*.*, labels/*.*, objects/*.*, workflows/*.*, pages/*.*, components/*.*, tabs/*.*, letterhead/*.*, triggers/*.*, layouts/*.*, reports/**/*.*, profiles/*.*, package.xml"
+	      />
+
+	      <sf:deploy
+	          username="${sf.username}"
+	          password="${sf.password}"
+	          serverurl="${sf.serverurl}"
+	          maxPoll="${sf.maxPoll}" pollWaitMillis="${sf.maxWaitMillis}"
+	          zipFile="${src.dir}/batch.zip"
+	          runalltests="true" >
+	      </sf:deploy>
+	  </target>   
 
     
 </project>
