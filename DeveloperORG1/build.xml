@@ -35,7 +35,7 @@
 	  <property file="/build.properties"/>
 	  <property environment="env"/>
 	  
-	    <target name="cleanAfter" depends="deployPackaged">
+	    <target name="cleanAfter" depends="deploy">
 	        <echo level="info">Clean Down Workspace Ready for Next Build</echo>
 	        <delete dir="${basedir}" failonerror="false" />
 	        <delete includeEmptyDirs="true" failonerror="false">
@@ -43,11 +43,11 @@
 	        </delete>
 	    </target>
 	    
-	    <target name="deployPackaged">   
+	    <target name="deploy">   
 	      <echo level="info">Perform a Deploy transaction</echo>
 	      <zip destfile="${src.dir}/batch.zip"
 	           basedir="/"
-	                 includes="applications/*.*, classes/*.*, staticresources/*.*,documents/**/*.*, email/**/*.*, labels/*.*, objects/*.*, workflows/*.*, pages/*.*, components/*.*, tabs/*.*, letterhead/*.*, triggers/*.*, layouts/*.*, reports/**/*.*, profiles/*.*, package.xml"
+	                 includes="classes/*.*"
 	      />
 
 	      <sf:deploy
@@ -55,7 +55,6 @@
 	          password="${sf.password}"
 	          serverurl="${sf.serverurl}"
 	          maxPoll="${sf.maxPoll}" pollWaitMillis="${sf.maxWaitMillis}"
-	          zipFile="/batch.zip"
 	          runalltests="true" >
 	      </sf:deploy>
 	  </target>   
